@@ -30,32 +30,104 @@
                 <email>alex.johnson@company.com</email>
             </employee>
         </department>
+                <department name="Marketing">
+            <employee id="3001">
+                <name>Emma Williams</name>
+                <position>Marketing Coordinator</position>
+                <email>emma.williams@company.com</email>
+            </employee>
+            <employee id="3002">
+                <name>Olivia Brown</name>
+                <position>SEO Specialist</position>
+                <email>olivia.brown@company.com</email>
+            </employee>
+            <employee id="3003">
+                <name>Liam Smith</name>
+                <position>Content Strategist</position>
+                <email>liam.smith@company.com</email>
+            </employee>
+        </department>
+        <department name="Finance">
+            <employee id="4001">
+                <name>Noah Miller</name>
+                <position>Financial Analyst</position>
+                <email>noah.miller@company.com</email>
+            </employee>
+        </department>
+        <department name="Human Resources">
+            <employee id="5001">
+                <name>Ava Davis</name>
+                <position>HR Manager</position>
+                <email>ava.davis@company.com</email>
+            </employee>
+            <employee id="5002">
+                <name>James Wilson</name>
+                <position>Recruitment Specialist</position>
+                <email>james.wilson@company.com</email>
+            </employee>
+        </department>
     </departments>
-    <products>
-        <product id="p001">
-            <name>Laptop Pro</name>
-            <price>1200</price>
-            <description>High-performance laptop with advanced graphics capabilities.</description>
-        </product>
-        <product id="p002">
-            <name>Wireless Mouse</name>
-            <price>50</price>
-            <description>Ergonomic mouse with customizable buttons.</description>
-        </product>
-        <product id="p003">
-            <name>Bluetooth Keyboard</name>
-            <price>70</price>
-            <description>Compact keyboard with mechanical keys and Bluetooth connectivity.</description>
-        </product>
-        <product id="p004">
-            <name>USB-C Docking Station</name>
-            <price>150</price>
-            <description>Connect multiple devices with this USB-C docking station.</description>
-        </product>
-        <product id="p005">
-            <name>Smartphone Lite</name>
-            <price>299</price>
-            <description>Cost-effective smartphone with all the essential features.</description>
-        </product>
-    </products>
+<products>
+    <product id="p001">
+        <name>Laptop Pro</name>
+        <price>1200</price>
+        <category>Computers</category>
+        <description>High-performance laptop with advanced graphics capabilities.</description>
+    </product>
+    <product id="p002">
+        <name>Wireless Mouse</name>
+        <price>50</price>
+        <category>Accessories</category>
+        <description>Ergonomic mouse with customizable buttons.</description>
+    </product>
+    <product id="p003">
+        <name>Bluetooth Keyboard</name>
+        <price>70</price>
+        <category>Accessories</category>
+        <description>Compact keyboard with mechanical keys and Bluetooth connectivity.</description>
+    </product>
+    <product id="p004">
+        <name>USB-C Docking Station</name>
+        <price>150</price>
+        <category>Electronics</category>
+        <description>Connect multiple devices with this USB-C docking station.</description>
+    </product>
+    <product id="p005">
+        <name>Smartphone Lite</name>
+        <price>299</price>
+        <category>Electronics</category>
+        <description>Cost-effective smartphone with all the essential features.</description>
+    </product>
+    <!-- New products added below -->
+    <product id="p006">
+        <name>4K HDR Monitor</name>
+        <price>450</price>
+        <category>Electronics</category>
+        <description>Stunning 4K HDR monitor for professional color work and gaming.</description>
+    </product>
+    <product id="p007">
+        <name>External Hard Drive</name>
+        <price>120</price>
+        <category>Storage</category>
+        <description>Portable 2TB external hard drive with fast data transfer speeds.</description>
+    </product>
+    <product id="p008">
+        <name>Noise-Cancelling Headphones</name>
+        <price>350</price>
+        <category>Audio</category>
+        <description>High-fidelity headphones with superior noise-cancellation technology.</description>
+    </product>
+    <product id="p009">
+        <name>Wireless Charging Pad</name>
+        <price>80</price>
+        <category>Accessories</category>
+        <description>Convenient wireless charging pad with quick charge capabilities.</description>
+    </product>
+    <product id="p010">
+        <name>Tablet Elite 8</name>
+        <price>600</price>
+        <category>Computers</category>
+        <description>Lightweight, powerful tablet perfect for business and entertainment.</description>
+    </product>
+</products>
 </company>
