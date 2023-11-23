@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<company>
+    <departments>
+        <department name="Sales">
+            <employee id="1001">
+                <name>John Doe</name>
+                <position>Manager</position>
+                <email>john.doe@company.com</email>
+            </employee>
+            <employee id="1002">
+                <name>Jane Smith</name>
+                <position>Sales Representative</position>
+                <email>jane.smith@company.com</email>
+            </employee>
+        </department>
+        <department name="IT">
+            <employee id="2001">
+                <name>Mike Brown</name>
+                <position>System Administrator</position>
+                <email>mike.brown@company.com</email>
+            </employee>
+            <employee id="2002">
+                <name>Susan Clark</name>
+                <position>Developer</position>
+                <email>susan.clark@company.com</email>
+            </employee>
+            <employee id="2003">
+                <name>Alex Johnson</name>
+                <position>Developer</position>
+                <email>alex.johnson@company.com</email>
+            </employee>
+        </department>
+    </departments>
+    <products>
+        <product id="p001">
+            <name>Laptop Pro</name>
+            <price>1200</price>
+            <description>High-performance laptop with advanced graphics capabilities.</description>
+        </product>
+        <product id="p002">
+            <name>Wireless Mouse</name>
+            <price>50</price>
+            <description>Ergonomic mouse with customizable buttons.</description>
+        </product>
+        <product id="p003">
+            <name>Bluetooth Keyboard</name>
+            <price>70</price>
+            <description>Compact keyboard with mechanical keys and Bluetooth connectivity.</description>
+        </product>
+        <product id="p004">
+            <name>USB-C Docking Station</name>
+            <price>150</price>
+            <description>Connect multiple devices with this USB-C docking station.</description>
+        </product>
+        <product id="p005">
+            <name>Smartphone Lite</name>
+            <price>299</price>
+            <description>Cost-effective smartphone with all the essential features.</description>
+        </product>
+    </products>
+</company>
