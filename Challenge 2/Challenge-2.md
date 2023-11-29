@@ -27,8 +27,8 @@ By the end of this challenge, you should be able to read and process XML data us
    ![Check the Terminal is PowerShell (pwsh)](./Images/Challenge-1.3.png "Check the Terminal is PowerShell (pwsh)")
 
 7. **Load the XML Data into PowerShell**:
-   - Locate the section starting with `[xml]$xmlData = Get-Content...`.
-   - Highlight this entire section.
+   - Locate the section called "Step 1".
+   - Highlight the entire code.
    - Right-click the highlighted text and select "Run Selection".
    ![Run XML Parsing Section](./Images/Challenge-1.4.png "Run XML Parsing Section")
 
