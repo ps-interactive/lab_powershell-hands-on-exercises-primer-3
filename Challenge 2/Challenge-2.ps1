@@ -1,7 +1,16 @@
-## Step 1: Load 'Challenge-2.xml' into a variable called $xmlData
+############
+## Step 1 ##
+############
+
+# Load 'Challenge-2.xml' into a variable called $xmlData
 [xml]$xmlData = Get-Content '.\Challenge 2\Challenge-2.xml'
 
-## Step 2: Display the Company, Departments, and Products Nodes
+
+
+############
+## Step 2 ##
+############
+
 # Display the XML
 $xmlData | Select-Object *
 
@@ -20,7 +29,12 @@ $xmlData.company.products
 # Iterate the Product Nodes
 $xmlData.company.products.product
 
-## Step 3: Display the Products
+
+
+############
+## Step 3 ##
+############
+
 # Iterate all Products with a price greater than 100
 $xmlData.company.products.product | `
     Where-Object { [int]$_.price -lt 100 }
@@ -57,7 +71,12 @@ $xmlData.company.products.product | ForEach-Object {
     }
 }
 
-## Step 4: Display the Employees
+
+
+############
+## Step 4 ##
+############
+
 # Iterate all Employees in the Sales Department
 $xmlData.company.departments.department | `
     Where-Object {$_.name -eq "Sales"} | `
@@ -73,7 +92,12 @@ $xmlData.company.departments.department | `
     Select-Object -ExpandProperty employee | `
         Select-Object name, position, email, @{Name="Department";Expression={$_.ParentNode.name}}
 
-## Step 5: Generate HTML Reports
+
+
+############
+## Step 5 ##
+############
+
 # Generate an HTML Report of all Employees
 $xmlData.company.departments.department | `
     Select-Object -ExpandProperty employee | `
@@ -93,7 +117,12 @@ $xmlData.company.products.product | `
 # Launch the HTML Report
 Invoke-Item '.\Challenge 2\Challenge-2-Products.html'
 
-## Step 6: Generate an HTML Report of ALL Data
+
+
+############
+## Step 6 ##
+############
+
 # Generate an HTML Report to Display ALL Data
 function Convert-SectionToHtml {
     param (

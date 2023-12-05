@@ -1,5 +1,9 @@
 
-# Step 1: Retrieve Basic Computer Information from Local Computer using CIM Instance
+############
+## Step 1 ##
+############
+
+# Retrieve Basic Computer Information from Local Computer using CIM Instance
 $ComputerInfo = Get-CimInstance -ClassName Win32_ComputerSystem
 $ComputerName = $ComputerInfo.Name
 Write-Host "Computer Name: $ComputerName"
@@ -17,7 +21,12 @@ Write-Host "CPU Core Count: $CPUCoreCount"
 Write-Host "CPU Thread Count: $CPUThreadCount"
 
 
-# Step 2: Retrieve Memory Information from Local Computer using CIM Instance
+
+############
+## Step 2 ##
+############
+
+# Retrieve Memory Information from Local Computer using CIM Instance
 $MemoryInfo = Get-CimInstance -ClassName Win32_PhysicalMemory
 
 # Retrieve Important Memory Information
@@ -31,7 +40,12 @@ Write-Host "Memory Speed: $MemorySpeed"
 Write-Host "Memory Manufacturer: $MemoryManufacturer"
 
 
-# Step 3: Retrieve Disk Information from Local Computer using CIM Instance
+
+############
+## Step 3 ##
+############
+
+# Retrieve Disk Information from Local Computer using CIM Instance
 $DiskInfo = Get-CimInstance -ClassName Win32_DiskDrive
 
 # Retrieve Important Disk Information
@@ -45,7 +59,12 @@ Write-Host "Disk Size: $DiskSize"
 Write-Host "Disk Interface: $DiskInterface"
 
 
-# Step 4: Retrieve Operating System Information from Local Computer using CIM Instance
+
+############
+## Step 4 ##
+############
+
+# Retrieve Operating System Information from Local Computer using CIM Instance
 $OSInfo = Get-CimInstance -ClassName Win32_OperatingSystem
 
 # Retrieve Important Operating System Information
@@ -61,7 +80,12 @@ Operating System Architecture: $OSArchitecture
 "@
 
 
-# Step 5: Retrieve System Details and Return as a PowerShell Object
+
+############
+## Step 5 ##
+############
+
+# Retrieve System Details and Return as a PowerShell Object
 $systemInfo = New-Object -TypeName PSObject
 
 # Gather and format CPU Information
@@ -96,7 +120,12 @@ $systemInfo | Format-List
 
 
 
-# Step 6: Function to Retrieve System Information from Local Computer using CIM Instance
+
+############
+## Step 6 ##
+############
+
+# Function to Retrieve System Information from Local Computer using CIM Instance
 function Get-SystemInfo {
     # Initialize a new PowerShell object
     $systemInfo = New-Object -TypeName PSObject
@@ -196,14 +225,3 @@ function Get-SystemInfo {
 
 # Execute the function
 Get-SystemInfo
-
-
-# Iteraate all Local Users and Display their Name, Enabled, LastLogon, and a new column that dispays if they are a local administrator or not
-Get-LocalUser | Select-Object Name, Enabled, LastLogon, @{Name="IsAdmin";Expression={(Get-LocalGroupMember -Group "Administrators" | Where-Object { $_.Name -eq $_.Name }).Count -gt 0}} | Format-Table -AutoSize
-
-# Iteraate all Local Users and Display their Name, Enabled, LastLogon, and a new column that dispays if they are a member of the local administrators group or not
-Get-LocalUser | Select-Object Name, Enabled, LastLogon, @{Name="IsAdmin";Expression={(Get-LocalGroupMember -Group "Administrators" | Where-Object { $_.Name -eq $_.Name }).Count -gt 0}} | Format-Table -AutoSize
-
-
-# Create App Locker Rule to allow the script "C:\PowerShell\TrustedScript.ps1" to Run
-New-AppLockerPolicy -RuleType Script -User Everyone -Action Allow -Path "C:\PowerShell\TrustedScript.ps1" -Description "Allow Trusted Script to Run"
