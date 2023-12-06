@@ -39,11 +39,9 @@ Function Send-CustomMailMessage {
     $smtpClient.Send($message)
 }
 
+
 # Create Credentials
 $Credentials = Get-Credential -UserName "globomantics\ralthor"
-
-# Enable PSRemoting on a Computer
-Enable-PSRemoting -Force
 
 # Test PSRemoting on a Computer
 Test-WSMan -ComputerName "DC01"
@@ -55,13 +53,15 @@ Test-NetConnection -ComputerName "DC01" -Port 5985
 Enter-PSSession -ComputerName "DC01" -Credential $Credentials
 
 # Remotely Connect to a Computer with Credentials and a Port
-Enter-PSSession -ComputerName "DC01" -Credential $Credentials -Port 5985
+Enter-PSSession -ComputerName "FS01" -Credential $Credentials -Port 5985
 
 # Query a Remote Computer
 Invoke-Command -ComputerName "DC01" -Credential $Credentials -ScriptBlock {Get-Process}
 
 # Query a Remote Computer with a Port
-Invoke-Command -ComputerName "DC01" -Credential $Credentials -Port 5985 -ScriptBlock {Get-Process}
+Invoke-Command -ComputerName "FS01" -Credential $Credentials -Port 5985 -ScriptBlock {Get-Process}
+
+
 
 ############
 ## Step 2 ##
@@ -73,20 +73,32 @@ Get-PSSession
 # View Current User Sessions with Detailed Information
 Get-PSSession | Format-List
 
-# View Current User Sessions with Detailed Information and Filter by Computer Name
-Get-PSSession | Where-Object {$_.ComputerName -eq "DC01"} | Format-List
-
 # Create a New User Session
 $Session = New-PSSession -ComputerName "DC01" -Credential $Credentials -Port 5985
+Get-PSSession
+
+# Create Multiple Sessions
+New-PSSession -ComputerName "DC01" -Credential $Credentials -Port 5985
+New-PSSession -ComputerName "FS01" -Credential $Credentials -Port 5985
+New-PSSession -ComputerName "DC01" -Credential $Credentials -Port 5985
+New-PSSession -ComputerName "FS01" -Credential $Credentials -Port 5985
+
+
+# View Current User Sessions with Detailed Information and Filter by Computer Name
+Get-PSSession | Where-Object {$_.ComputerName -eq "DC01"} | Format-Table
 
 # Connect to a User Session
-Enter-PSSession -Id $Session.Id
+Get-PSSession | Format-Table
+
+Enter-PSSession -Id 7
+Enter-PSSession -Id 9
 
 # Disconnect from a User Session
 Exit-PSSession
 
 # Remove a User Session
-Remove-PSSession -Id $Session.Id
+Remove-PSSession -Id 7
+Remove-PSSession -Id 9
 
 
 
@@ -96,7 +108,8 @@ Remove-PSSession -Id $Session.Id
 
 # Retrieve Installed Applications from a Remote Computer
 Invoke-Command -ComputerName "DC01" -Credential $Credentials -Port 5985 -ScriptBlock {
-    Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | 
+    Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*,
+    HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | 
     Select-Object DisplayName, DisplayVersion, Publisher, InstallDate | 
     Format-Table -AutoSize
 }
@@ -161,40 +174,6 @@ Send-CustomMailMessage -To "Administrator@localhost" -From "UnapprovedApplicatio
 ## Step 5 ##
 ############
 
-# Retrieve Installed Applications from Multiple Remote Computers and Compare to a List of Approved Applications and Display the Results in a Grid View with an extra column for Approved Applications
-$unapprovedApps = Invoke-Command -ComputerName "DC01", "FS01" -Credential $Credentials -Port 5985 -ScriptBlock {
-    $ComputerName = $env:COMPUTERNAME
-    Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*,
-    HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | 
-    Select-Object @{
-        Name="ComputerName"
-        Expression={"$ComputerName"}
-    }, 
-    DisplayName, 
-    DisplayVersion, 
-    Publisher, 
-    InstallDate,
-    @{
-        Name="Approved"
-        Expression={
-            if ($ApprovedApplications.Applications | Where-Object {$_.Name -eq $_.DisplayName -and $_.Version -eq $_.DisplayVersion -and $_.Publisher -eq $_.Publisher}) {
-                "Yes"
-            } else {
-                "No"
-            }
-        }
-    }
-} | Where-Object {$_.DisplayName -notin "Microsoft Edge", "Nmap 7.80", "PowerShell 7-x64", "Microsoft Visual Studio Code" } 
-
-$unapprovedApps | Out-GridView
-
-
-
-
-############
-## Step 6 ##
-############
-
 # Create an Approved Applications List in JSON Format
 $ApprovedApplications = @"
 {
@@ -239,53 +218,6 @@ $unapprovedApps = Invoke-Command -ComputerName "DC01", "FS01" -Credential $Crede
     DisplayVersion, 
     Publisher, 
     InstallDate,
-    @{
-        Name="Approved"
-        Expression={
-            if ($ApprovedApplicationsList.Applications | Where-Object {$_.DisplayName -eq $_.DisplayName -and $_.DisplayVersion -eq $_.DisplayVersion -and $_.Publisher -eq $_.Publisher}) {
-                "Yes"
-            } else {
-                "No"
-            }
-        }
-    }
 } | Where-Object {$_.DisplayName -notin $ApprovedApplicationsList.Applications.DisplayName} 
 
 $unapprovedApps | Out-GridView
-
-
-
-############
-## Step 7 ##
-############
-
-# Connect to a Remote Computer and Retrieve Installed Applications not using Invoke-Command
-$Session = New-PSSession -ComputerName "DC01" -Credential $Credentials -Port 5985
-
-$unapprovedApps = Invoke-Command -Session $Session -ScriptBlock {
-    $ComputerName = $env:COMPUTERNAME
-    Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*,
-    HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | 
-    Select-Object @{
-        Name="ComputerName"
-        Expression={"$ComputerName"}
-    }, 
-    DisplayName, 
-    DisplayVersion, 
-    Publisher, 
-    InstallDate,
-    @{
-        Name="Approved"
-        Expression={
-            if ($ApprovedApplicationsList.Applications | Where-Object {$_.DisplayName -eq $_.DisplayName -and $_.DisplayVersion -eq $_.DisplayVersion -and $_.Publisher -eq $_.Publisher}) {
-                "Yes"
-            } else {
-                "No"
-            }
-        }
-    }
-} | Where-Object {$_.DisplayName -notin $ApprovedApplicationsList.Applications.DisplayName} 
-
-$unapprovedApps | Out-GridView
-
-

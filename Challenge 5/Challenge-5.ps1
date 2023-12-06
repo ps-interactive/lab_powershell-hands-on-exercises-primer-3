@@ -5,6 +5,7 @@
 
 # Retrieve Windows Services
 $services = Get-Service
+$services
 
 # Loop through each service
 ForEach ($service in $services) {

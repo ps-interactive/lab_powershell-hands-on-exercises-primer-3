@@ -5,6 +5,7 @@
 
 # Retrieve Event Logs using Get-WinEvent
 $events = Get-WinEvent -LogName "Application" -MaxEvents 10
+$events
 
 # Loop through each event
 ForEach ($event in $events) {
@@ -22,12 +23,15 @@ ForEach ($event in $events) {
 
 # Filter the Logs by Text
 $events = Get-WinEvent -LogName "Application" -MaxEvents 10 | Where-Object {$_.Message -like "*error*"}
+$events
 
 # Filter the Logs by Event ID
 $events = Get-WinEvent -LogName "Application" -MaxEvents 10 | Where-Object {$_.Id -eq 1000}
+$events
 
 # Filter the Logs by Event ID and Text
 $events = Get-WinEvent -LogName "Application" -MaxEvents 10 | Where-Object {$_.Id -eq 1000 -and $_.Message -like "*error*"}
+$events
 
 # Create a function to retrieve Event Logs
 Function Get-EventLogEntries {
@@ -41,6 +45,7 @@ Function Get-EventLogEntries {
     # Retrieve Event Logs using Get-WinEvent
     $events = Get-WinEvent -LogName $LogName -MaxEvents $MaxEvents
 
+    Write-Host "Event Log Entries: $($LogName)"
     # Loop through each event
     ForEach ($event in $events) {
         # Display the event ID and message
@@ -59,49 +64,30 @@ Get-EventLogEntries  -LogName "Application" -MaxEvents 10
 ## Step 3 ##
 ############
 
-# Filter the Event Logs looking for failed logons
-$events = Get-WinEvent -LogName "Security" -MaxEvents 10 | Where-Object {$_.Id -eq 4625}
+# Query the Event Log 'PluralsightErros' looking for failed logons
+$events = Get-WinEvent -LogName "PluralsightErrors" -MaxEvents 100 | Where-Object {$_.Id -eq 4625}
+$events
 
-# Filter the Event Logs looking for failed logons for a specific user
-$events = Get-WinEvent -LogName "Security" -MaxEvents 10 | Where-Object {$_.Id -eq 4625 -and $_.Message -like "*TestUser*"}
+# Query the Event Log 'PluralsightErros' looking for failed logons for a specific user
+$events = Get-WinEvent -LogName "PluralsightErrors" -MaxEvents 100 | Where-Object {$_.Id -eq 4625 -and $_.Message -like "*User*"}
+$events
 
-# Group and results by account and IP address
-$events = Get-WinEvent -LogName "Security" -MaxEvents 10 | Where-Object {$_.Id -eq 4625 -and $_.Message -like "*TestUser*"} | Group-Object -Property {$_.Properties[5].Value}   
+# Group and results by event ID
+$events = Get-WinEvent -LogName "PluralsightErrors" -MaxEvents 100 | Where-Object {$_.Message -like "*User*"} | Group-Object -Property {$_.Id} | Select-Object -Property Name, Count
+$events
 
-# Generate a Report highlighting suspicious patterns from the Event Logs
-$events = Get-WinEvent -LogName "Security" -MaxEvents 10 | Where-Object {$_.Id -eq 4625 -and $_.Message -like "*TestUser*"} | Group-Object -Property {$_.Properties[5].Value} | Where-Object {$_.Count -gt 1} | Select-Object -Property Name, Count
+# Look for Patterns in the Event Logs
+$events = Get-WinEvent -LogName "PluralsightErrors" -MaxEvents 100 | Where-Object {$_.Message -like "*User*"} | Group-Object -Property {$_.Id} | Where-Object {$_.Count -gt 10} | Select-Object -Property Name, Count
+$events
 
-# Display the results in a Grid View
-$events | Out-GridView
-
-# Export Event Logs
-$events | Export-Csv -Path "C:\Temp\FailedLogons.csv" -NoTypeInformation
-
-# Query Multiple Event logs looking for patterns
-$events = Get-WinEvent -LogName "Security", "Application" -MaxEvents 10 | Where-Object {$_.Id -eq 4625 -and $_.Message -like "*TestUser*"} | Group-Object -Property {$_.Properties[5].Value} | Where-Object {$_.Count -gt 1} | Select-Object -Property Name, Count
 
 
 ############
 ## Step 4 ##
 ############
 
-# Query the Event Log 'PluralsightErros' looking for failed logons
-$events = Get-WinEvent -LogName "PluralsightErrors" -MaxEvents 100 | Where-Object {$_.Id -eq 4625}
-
-# Query the Event Log 'PluralsightErros' looking for failed logons for a specific user
-$events = Get-WinEvent -LogName "PluralsightErrors" -MaxEvents 100 | Where-Object {$_.Id -eq 4625 -and $_.Message -like "*User*"}
-
-# Group and results by event ID
-$events = Get-WinEvent -LogName "PluralsightErrors" -MaxEvents 100 | Where-Object {$_.Message -like "*User*"} | Group-Object -Property {$_.Id} | Select-Object -Property Name, Count
-
-# Look for Patterns in the Event Logs
-$events = Get-WinEvent -LogName "PluralsightErrors" -MaxEvents 100 | Where-Object {$_.Message -like "*User*"} | Group-Object -Property {$_.Id} | Where-Object {$_.Count -gt 10} | Select-Object -Property Name, Count
-
-
-
-############
-## Step 5 ##
-############
+# Get all the Event Logs
+$events = Get-WinEvent -LogName "PluralsightErrors" -MaxEvents 100
 
 # Define the CSS styles
 $css = @"
@@ -126,20 +112,4 @@ $html = $html -replace "<tr>(.*?)<td>4740</td>(.*?)</tr>", '<tr class="highlight
 
 # Output to file
 $html | Out-File -FilePath "FailedLogons.html"
-
-
-
-
-
-
-
-
-
-#$events | ConvertTo-Html -Property Name, Count | Out-File -FilePath "C:\Temp\FailedLogons.html"
-
-
-# Display the results in a Grid View
-$events | Out-GridView
-
-
-
+Invoke-Item -Path "FailedLogons.html"

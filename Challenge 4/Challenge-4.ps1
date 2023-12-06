@@ -14,6 +14,7 @@ $LDAPFilter = "(&(objectCategory=person)(objectClass=user))"
 # Search for the users
 $Users = Get-ADUser -SearchBase $OU -LDAPFilter $LDAPFilter
 $Users | Select-Object Name, mail
+$Users
 
 # Loop through the users
 ForEach ($User in $Users) {
@@ -42,36 +43,42 @@ New-ADUser `
     -Enabled $true `
     -ChangePasswordAtLogon $true `
     -EmailAddress ""
+Get-ADuser -Identity "TestUser" -Properties *
 
 # Set the user's email address
 Set-ADUser `
     -Identity "TestUser" `
     -EmailAddress "TestUser@globomantics.co"
+Get-ADuser -Identity "TestUser" -Properties *
 
 # Set the user's Department
 Set-ADUser `
     -Identity "TestUser" `
     -Department "IT"
+Get-ADuser -Identity "TestUser" -Properties *
 
 # Set Advanced User properties
-Set-ADUser `
-    -Identity "TestUser" `
-    -Title "IT Administrator" `
-    -Description "IT Administrator" `
-    -Company "Contoso" `
-    -Office "London" `
-    -OfficePhone "0123456789" `
-    -MobilePhone "0123456789" `
-    -StreetAddress "123 Test Street" `
-    -PostalCode "SW1A 1AA" `
-    -Country "UK"
+$UserProperties = @{
+    Identity = "TestUser"
+    Title = "IT Administrator"
+    Description = "IT Administrator"
+    Company = "Contoso"
+    Office = "London"
+    OfficePhone = "0123456789"
+    MobilePhone = "0123456789"
+    StreetAddress = "123 Test Street"
+    PostalCode = "SW1A 1AA"
+    Country = "UK"
+}
 
+Set-ADUser @UserProperties
+Get-ADuser -Identity "TestUser" -Properties *
 
 # Delete the user
 Remove-ADUser `
     -Identity "TestUser" `
     -Confirm:$false
-
+Get-ADuser -Identity "TestUser"
 
 
 ############
@@ -111,6 +118,8 @@ New-ADUser `
     -Enabled $User.Enabled `
     -ChangePasswordAtLogon $User.ChangePasswordAtLogon `
     -EmailAddress $User.EmailAddress
+
+Get-ADuser -Identity "TestUser" -Properties *
 
 # Create function to check if a user exists
 Function UserExists {
@@ -186,6 +195,8 @@ Function New-ADUser {
             -Enabled $Enabled `
             -ChangePasswordAtLogon $ChangePasswordAtLogon `
             -EmailAddress $EmailAddress
+        
+            Get-ADuser -Identity $SamAccountName -Properties *
     }
 }
 
@@ -235,16 +246,6 @@ ForEach ($User in $Users) {
         -EmailAddress $User.EmailAddress
 }
 
-# Validate the User is Created, write the user to the console and message saying the user was created
-If (UserExists -SamAccountName "TestUser1") {
-    Write-Host "User Created" -ForegroundColor Green
-    Get-ADUser -Filter "SamAccountName -eq 'TestUser1'"
-}
-Else {
-    Write-Host "User not created" -ForegroundColor Red
-}
-
-
 
 ############
 ## Step 5 ##
@@ -252,8 +253,10 @@ Else {
 
 # Create the Test OU
 New-ADOrganizationalUnit -Name "UserTemplates" -ProtectedFromAccidentalDeletion $False
-$UserTemplatesOU = "OU=UserTemplates,DC=globomantics,DC=co"
+Get-ADOrganizationalUnit -Filter "Name -eq 'UserTemplates'"
 
+# Set Variables
+$UserTemplatesOU = "OU=UserTemplates,DC=globomantics,DC=co"
 $templateUserName = "Sales_Template_User"
 $password = ConvertTo-SecureString "P@ssw0rd!" -AsPlainText -Force
 
@@ -287,13 +290,14 @@ $params = @{
 }
 
 Set-ADUser @params
+Get-ADuser -Identity $params.Identity -Properties Department, Company, Office, City, State, Country
 
 # Add the template user to standard groups
 New-ADGroup -Name "StaffGroup" -GroupScope Global -GroupCategory Security -Path $UserTemplatesOU
 Add-ADGroupMember -Identity "StaffGroup" -Members $templateUserName
 
 # Function to create a new user from a template
-function New-UserFromTemplate {
+Function New-UserFromTemplate {
     param (
         [string]$templateUsername,
         [string]$newUsername,
@@ -332,11 +336,22 @@ function New-UserFromTemplate {
 
     New-ADUser @newUserProperties
 
-    Get-ADUser -Identity $templateUsername -Properties MemberOf | Select-Object -ExpandProperty MemberOf | Where-Object {$_ -notlike "*CN=Domain Users*"} | ForEach-Object { Add-ADGroupMember -Identity $_ -Members $newUsername }
+    Get-ADUser -Identity $templateUsername -Properties MemberOf |
+    Select-Object -ExpandProperty MemberOf |
+    Where-Object {$_ -notlike "*CN=Domain Users*"} |
+    ForEach-Object { Add-ADGroupMember -Identity $_ -Members $newUsername }
 }
 
 # Usage example
-New-UserFromTemplate -templateUsername "Sales_Template_User" -newUsername "jdoe" -newUserDisplayName "John Doe" -newUserPassword (ConvertTo-SecureString "Password123" -AsPlainText -Force)
+
+$params = @{
+    templateUsername = "Sales_Template_User"
+    newUsername = "jdoe"
+    newUserDisplayName = "John Doe"
+    newUserPassword = (ConvertTo-SecureString "Password123" -AsPlainText -Force)
+}
+
+New-UserFromTemplate @params
 
 
 
