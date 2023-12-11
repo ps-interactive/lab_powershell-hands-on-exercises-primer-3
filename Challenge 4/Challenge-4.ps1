@@ -143,8 +143,7 @@ Function UserExists {
 If (UserExists -SamAccountName "TestUser") {
     # Display a message
     Write-Host "User exists" -ForegroundColor Green
-}
-Else {
+} Else {
     # Display a message
     Write-Host "User does not exist" -ForegroundColor Red
 }
