@@ -28,8 +28,7 @@ Write-Host "Service Name: $($service.Name)"
 # Display a message if the service is running
 If ($service.Status -eq "Running") {
     Write-Host "Service Status: Running" -ForegroundColor Green
-}
-Else {
+} Else {
     Write-Host "Service Status: Stopped" -ForegroundColor Red
 }
 
