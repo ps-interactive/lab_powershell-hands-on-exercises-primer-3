@@ -149,7 +149,7 @@ If (UserExists -SamAccountName "TestUser") {
 }
 
 # Create function for creating a user in AD, include the UserExists function
-Function New-ADUser {
+Function New-ADTestUser {
     Param (
         [Parameter(Mandatory=$true)]
         [String]$Name,
@@ -200,7 +200,7 @@ Function New-ADUser {
 }
 
 # Create the user
-New-ADUser `
+New-ADTestUser `
     -Name "Test User" `
     -SamAccountName "TestUser" `
     -UserPrincipalName "#" `
@@ -347,6 +347,8 @@ $params = @{
     templateUsername = "Sales_Template_User"
     newUsername = "jdoe"
     newUserDisplayName = "John Doe"
+    givenName = "John"
+    surname = "Doe"
     newUserPassword = (ConvertTo-SecureString "Password123" -AsPlainText -Force)
 }
 
