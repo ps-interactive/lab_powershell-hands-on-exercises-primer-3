@@ -158,7 +158,7 @@ $unapprovedApps = Invoke-Command -ComputerName "DC01", "FS01" -Credential $Crede
         DisplayVersion, 
         Publisher, 
         InstallDate
-} | Where-Object {$_.DisplayName -in "Microsoft Edge", "Nmap 7.80", "PowerShell 7-x64", "Microsoft Visual Studio Code" } 
+} | Where-Object {$_.DisplayName -notin "Microsoft Edge", "Nmap 7.80", "PowerShell 7-x64", "Microsoft Visual Studio Code" } 
 
 $emailBody = $unapprovedApps | Group-Object ComputerName | ForEach-Object {
     $computerName = $_.Name
