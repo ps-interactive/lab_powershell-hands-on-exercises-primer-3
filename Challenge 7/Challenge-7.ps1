@@ -217,7 +217,7 @@ $unapprovedApps = Invoke-Command -ComputerName "DC01", "FS01" -Credential $Crede
     DisplayName, 
     DisplayVersion, 
     Publisher, 
-    InstallDate,
+    InstallDate
 } | Where-Object {$_.DisplayName -notin $ApprovedApplicationsList.Applications.DisplayName} 
 
 $unapprovedApps | Out-GridView
